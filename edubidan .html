@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduBidan Premium - Sahabat Bunda</title>
+    <style>
+        :root {
+            --primary-pink: #e91e63;
+            --primary-blue: #0288d1;
+            --bg-color: #fff5f8;
+            --white: #ffffff;
+            --text-dark: #333;
+            --shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
+        
+        body { background-color: var(--bg-color); color: var(--text-dark); overflow-x: hidden; }
+
+        /* Animasi Bunga Jatuh */
+        .flower { position: fixed; top: -10%; z-index: -1; user-select: none; animation: fall linear infinite; }
+        @keyframes fall {
+            to { transform: translateY(110vh) rotate(360deg); }
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo { font-size: 1.4rem; font-weight: bold; color: var(--primary-pink); }
+
+        .container { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+
+        .welcome-section {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 25px;
+            text-align: center;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            animation: fadeIn 0.8s ease;
+        }
+
+        .category-nav {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 2rem;
+        }
+
+        .nav-btn {
+            padding: 12px 30px;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+            background: #eee;
+            color: #777;
+        }
+
+        .nav-btn.active-nifas { background: var(--primary-pink); color: white; }
+        .nav-btn.active-asi { background: var(--primary-blue); color: white; }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border: 2px solid transparent;
+        }
+
+        .card:hover { transform: translateY(-5px); border-color: var(--primary-pink); }
+        .card-icon { font-size: 2.5rem; }
+
+        #detail-view {
+            display: none;
+            background: var(--white);
+            padding: 2.5rem;
+            border-radius: 30px;
+            box-shadow: var(--shadow);
+            animation: slideUp 0.5s ease;
+        }
+
+        .btn-back { color: var(--primary-pink); cursor: pointer; font-weight: bold; margin-bottom: 1.5rem; display: block; }
+
+        .content-text { line-height: 1.8; font-size: 1.1rem; color: #555; white-space: pre-wrap; margin-bottom: 2rem; }
+
+        .btn-drive {
+            display: block;
+            background: #34a853;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-bottom: 2rem;
+        }
+
+        /* Polling Section */
+        .poll-box {
+            background: #f9f9f9;
+            padding: 1.5rem;
+            border-radius: 15px;
+            border: 1px solid #eee;
+        }
+
+        .poll-option {
+            background: white;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            margin-top: 10px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .poll-option:hover { border-color: var(--primary-pink); }
+
+        .status-msg {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 10px;
+            display: none;
+            font-weight: bold;
+        }
+
+        .setup-screen {
+            position: fixed;
+            inset: 0;
+            background: white;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <div id="setup" class="setup-screen">
+        <div style="text-align:center; max-width: 400px; width: 90%;">
+            <div style="font-size: 4rem;">🤱</div>
+            <h1 style="color: var(--primary-pink); margin-bottom: 10px;">Halo Bunda!</h1>
+            <p style="color: #666; margin-bottom: 20px;">Masukkan nama panggilan Bunda untuk memulai edukasi.</p>
+            <input type="text" id="user-name" placeholder="Nama Bunda..." style="width:100%; padding:15px; border-radius:12px; border:2px solid #eee; outline:none; text-align:center; font-size:1.1rem; margin-bottom:15px;">
+            <button onclick="saveUser()" style="width:100%; padding:15px; background:var(--primary-pink); color:white; border:none; border-radius:12px; font-weight:bold; cursor:pointer;">Mulai Sekarang</button>
+        </div>
+    </div>
+
+    <header>
+        <div class="logo">🌸 EduBidan</div>
+        <div id="display-name" style="font-weight: bold; color: #666;"></div>
+    </header>
+
+    <div class="container">
+        <div id="home-view">
+            <div class="welcome-section">
+                <h2 id="greet-text">Selamat Datang, Bunda!</h2>
+                <p>Mari belajar bersama demi kesehatan Bunda dan buah hati.</p>
+            </div>
+
+            <div class="category-nav">
+                <button id="nav-nifas" class="nav-btn active-nifas" onclick="switchCategory('nifas')">Masa Nifas</button>
+                <button id="nav-asi" class="nav-btn" onclick="switchCategory('asi')">Menyusui</button>
+            </div>
+
+            <div id="card-grid" class="menu-grid"></div>
+        </div>
+
+        <div id="detail-view">
+            <div class="btn-back" onclick="goHome()">← Kembali ke Menu</div>
+            <h2 id="detail-title" style="margin-bottom: 1rem;"></h2>
+            <div id="detail-text" class="content-text"></div>
+            
+            <a id="drive-link" href="#" target="_blank" class="btn-drive">📁 Buka Materi Visual (Video/PDF)</a>
+
+            <div class="poll-box">
+                <h3 id="poll-q">Cek Kondisi Bunda</h3>
+                <div id="poll-options"></div>
+                <div id="poll-result" class="status-msg"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const appData = {
+            nifas: [
+                { 
+                    id: 'n1', icon: '🛁', title: 'Ritual Kesegaran', 
+                    link: 'https://drive.google.com/drive/folders/18N0giiAIH3GJm_TVSDY8zzs0_UYT6jfI',
+                    text: 'Perawatan Luka & Kebersihan:\n1. Mandi 2x sehari untuk melancarkan sirkulasi.\n2. Ganti pembalut tiap 4 jam.\n3. Keringkan luka jahitan dengan cara ditepuk lembut.',
+                    poll: {
+                        q: "Bagaimana kondisi luka jahitan Bunda?",
+                        options: [
+                            { t: "Kering dan mulai membaik", s: "Aman", m: "Bagus Bunda! Terus jaga kebersihannya ya.", c: "#e8f5e9", tc: "#2e7d32" },
+                            { t: "Basah, nyeri hebat, atau berbau", s: "Waspada", m: "Segera konsultasi ke bidan/dokter ya Bunda.", c: "#fff3e0", tc: "#e65100" }
+                        ]
+                    }
+                },
+                { 
+                    id: 'n2', icon: '🚨', title: 'Alarm Waspada', 
+                    link: 'https://drive.google.com/drive/folders/16b6WvGGiJGu1mj3_Hd_8RhUv0EOj3vPD',
+                    text: 'Kenali Tanda Bahaya:\n- Perdarahan hebat (tembus pembalut dlm 1 jam)\n- Demam tinggi > 38°C\n- Pusing hebat & penglihatan kabur\n- Nyeri dada atau sesak napas',
+                    poll: {
+                        q: "Apakah Bunda merasakan gejala aneh hari ini?",
+                        options: [
+                            { t: "Tidak, saya merasa sehat", s: "Aman", m: "Alhamdulillah, tetap pantau kondisi ya.", c: "#e8f5e9", tc: "#2e7d32" },
+                            { t: "Ya, saya demam atau sangat pusing", s: "Bahaya", m: "Jangan ditunda, segera ke Fasilitas Kesehatan!", c: "#ffebee", tc: "#c62828" }
+                        ]
+                    }
+                },
+                { 
+                    id: 'n3', icon: '🐣', title: 'Gerbang Kasih', 
+                    link: 'https://drive.google.com/drive/folders/1Pp-G1R1PvbCP8QyuaI17UX8DumNqA8EB',
+                    text: 'Masa 6 jam - 3 hari pertama:\n- Mobilisasi dini (miring kanan-kiri, belajar jalan)\n- Pastikan rahim terasa keras (mengerut)\n- Nutrisi tinggi protein (ikan, telur) untuk luka.',
+                    poll: {
+                        q: "Sudahkah Bunda mencoba jalan perlahan?",
+                        options: [
+                            { t: "Sudah lancar", s: "Aman", m: "Hebat! Gerakan ringan bantu rahim cepat pulih.", c: "#e8f5e9", tc: "#2e7d32" },
+                            { t: "Masih pusing sekali", s: "Pantau", m: "Coba duduk tegak dulu sebelum berdiri ya.", c: "#fff3e0", tc: "#e65100" }
+                        ]
+                    }
+                },
+                { id: 'n4', icon: '🌈', title: 'Hati yang Tenang', link: 'https://drive.google.com/drive/folders/10W52hfz0id_boI3oqY9ubgWy4LNXlcHr', text: 'Jaga kesehatan mental Bunda. Normal merasa sedih di 10 hari pertama (Baby Blues), namun pastikan ada teman bercerita.', poll: { q: "Bagaimana perasaan Bunda?", options: [{t:"Bahagia/Tenang", s:"Aman", m:"Nikmati momen ini Bunda.", c:"#e8f5e9", tc:"#2e7d32"}, {t:"Sering Menangis", s:"Waspada", m:"Ceritakan pada suami/bidan ya.", c:"#fff3e0", tc:"#e65100"}]}},
+                { id: 'n5', icon: '🤝', title: 'Dukungan Suami', link: 'https://drive.google.com/drive/folders/1HddcYQoq49q6yckBPdpwqpM3MsEvdkco', text: 'Ayah adalah pilar utama. Membantu pekerjaan rumah dan menggendong bayi memberikan waktu Bunda untuk istirahat.', poll: { q: "Ayah ikut membantu?", options: [{t:"Sangat Membantu", s:"Aman", m:"Ayah yang hebat!", c:"#e8f5e9", tc:"#2e7d32"}, {t:"Belum Terlalu", s:"Dialog", m:"Coba bagi tugas secara lembut ya.", c:"#fff3e0", tc:"#e65100"}]}}
+            ],
+            asi: [
+                { id: 'a1', icon: '🤱', title: 'Pelukan Pertama', link: 'https://drive.google.com/drive/folders/1Vm20osksNdQM5hVNeH5ZkQmiDsm-WDHK', text: 'Inisiasi Menyusu Dini (IMD):\nBayi diletakkan di dada Bunda segera setelah lahir untuk mencari puting sendiri. Ini menguatkan bonding dan kekebalan tubuh.', poll: { q: "Lakukan IMD saat lahir?", options: [{t:"Ya", s:"Aman", m:"Luar biasa!", c:"#e8f5e9"}, {t:"Tidak", s:"Tetap Semangat", m:"Lakukan skin-to-skin sekarang.", c:"#eee"}]}},
+                { id: 'a2', icon: '✨', title: 'Emas Cair Bunda', link: 'https://drive.google.com/drive/folders/1Pp-G1R1PvbCP8QyuaI17UX8DumNqA8EB', text: 'Kolostrum (ASI 1-3 hari pertama):\nCairan kuning kental kaya akan antibodi. Jangan dibuang karena ini adalah vaksin pertama bayi Bunda!', poll: { q: "Sudah keluar kolostrum?", options: [{t:"Sudah", s:"Aman", m:"Susui terus ya Bunda.", c:"#e8f5e9"}, {t:"Belum", s:"Pantau", m:"Terus stimulasi dengan hisapan bayi.", c:"#fff3e0"}]}},
+                { id: 'a3', icon: '📐', title: 'Posisi Nyaman', link: 'https://drive.google.com/drive/folders/1BdON2LZQZyymMsYaA27ZdqIKQS7atyXA', text: 'Perlekatan Benar:\n- Mulut bayi terbuka lebar\n- Dagu menempel payudara\n- Sebagian besar areola masuk ke mulut bayi.', poll: { q: "Menyusui terasa sakit?", options: [{t:"Tidak", s:"Aman", m:"Perlekatan sudah pas!", c:"#e8f5e9"}, {t:"Ya, Perih", s:"Waspada", m:"Coba perbaiki posisi bibir bayi.", c:"#fff3e0"}]}},
+                { id: 'a4', icon: '🩹', title: 'Solusi Payudara', link: 'https://drive.google.com/drive/folders/12yGPFSik9VxPOgHUdzY7GgcMWkOoWAzc', text: 'Mengatasi Puting Lecet & Bengkak:\n- Oleskan ASI pada puting\n- Kompres hangat sebelum menyusui\n- Kompres dingin setelahnya.', poll: { q: "Payudara terasa bengkak?", options: [{t:"Tidak", s:"Aman", m:"Aliran ASI lancar.", c:"#e8f5e9"}, {t:"Ya, Keras", s:"Waspada", m:"Lakukan kompres & pijat lembut.", c:"#fff3e0"}]}},
+                { id: 'a5', icon: '❄️', title: 'Tabungan ASI', link: 'https://drive.google.com/drive/folders/1vsIT36BlQSrFhQwUgzrXNN0tzSe6L23K', text: 'Manajemen ASIP:\n- Suhu ruang: 4 jam\n- Kulkas: 4 hari\n- Freezer: 6 bulan\nBerikan label tanggal pada setiap wadah.', poll: { q: "Sudah mulai menabung?", options: [{t:"Sudah", s:"Aman", m:"Bagus untuk persiapan kerja.", c:"#e8f5e9"}, {t:"Belum", s:"Proses", m:"Santai saja Bunda, prioritaskan DBF.", c:"#eee"}]}},
+                { id: 'a6', icon: '🌱', title: 'Tumbuh Bersama', link: 'https://drive.google.com/drive/folders/1P4r_VcYEHXcpdmOUT_Tn8mKgMtJbJFNa', text: 'Menyusui hingga 2 tahun:\nDukung pertumbuhan anak dengan ASI dan MPASI bergizi seimbang setelah usia 6 bulan.', poll: { q: "Siap ASI Eksklusif?", options: [{t:"Siap!", s:"Semangat", m:"Kami mendukung Bunda.", c:"#e8f5e9"}, {t:"Masih Ragu", s:"Edukasi", m:"ASI adalah nutrisi terbaik.", c:"#eee"}]}}
+            ]
+        };
+
+        function saveUser() {
+            const name = document.getElementById('user-name').value;
+            if(!name) return;
+            localStorage.setItem('eb_user', name);
+            initApp();
+        }
+
+        function initApp() {
+            const name = localStorage.getItem('eb_user');
+            if(!name) return;
+            document.getElementById('setup').classList.add('hidden');
+            document.getElementById('display-name').textContent = `Bunda ${name}`;
+            document.getElementById('greet-text').textContent = `Selamat Belajar, Bunda ${name}!`;
+            switchCategory('nifas');
+            createFlowers();
+        }
+
+        function switchCategory(cat) {
+            const nifasBtn = document.getElementById('nav-nifas');
+            const asiBtn = document.getElementById('nav-asi');
+            nifasBtn.className = `nav-btn ${cat === 'nifas' ? 'active-nifas' : ''}`;
+            asiBtn.className = `nav-btn ${cat === 'asi' ? 'active-asi' : ''}`;
+            
+            const grid = document.getElementById('card-grid');
+            grid.innerHTML = '';
+            appData[cat].forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.onclick = () => showDetail(item);
+                card.innerHTML = `<div class="card-icon">${item.icon}</div><div><strong>${item.title}</strong><p style="font-size:0.8rem;color:#999">Klik untuk detail</p></div>`;
+                grid.appendChild(card);
+            });
+        }
+
+        function showDetail(item) {
+            document.getElementById('home-view').classList.add('hidden');
+            document.getElementById('detail-view').style.display = 'block';
+            document.getElementById('detail-title').textContent = item.title;
+            document.getElementById('detail-text').innerText = item.text;
+            document.getElementById('drive-link').href = item.link;
+
+            const pollQ = document.getElementById('poll-q');
+            const pollOpts = document.getElementById('poll-options');
+            const pollRes = document.getElementById('poll-result');
+            
+            pollQ.textContent = item.poll.q;
+            pollOpts.innerHTML = '';
+            pollRes.style.display = 'none';
+
+            item.poll.options.forEach(o => {
+                const opt = document.createElement('div');
+                opt.className = 'poll-option';
+                opt.innerHTML = `<span>${o.t}</span><small>${o.s}</small>`;
+                opt.onclick = () => {
+                    pollRes.style.display = 'block';
+                    pollRes.textContent = o.m;
+                    pollRes.style.backgroundColor = o.c || '#f0f0f0';
+                    pollRes.style.color = o.tc || '#333';
+                };
+                pollOpts.appendChild(opt);
+            });
+            window.scrollTo(0,0);
+        }
+
+        function goHome() {
+            document.getElementById('detail-view').style.display = 'none';
+            document.getElementById('home-view').classList.remove('hidden');
+        }
+
+        function createFlowers() {
+            for(let i=0; i<10; i++) {
+                const f = document.createElement('div');
+                f.className = 'flower';
+                f.textContent = ['🌸','🌺','🌼'][Math.floor(Math.random()*3)];
+                f.style.left = Math.random() * 100 + 'vw';
+                f.style.fontSize = (Math.random() * 20 + 20) + 'px';
+                f.style.animationDuration = (Math.random() * 5 + 5) + 's';
+                f.style.animationDelay = (Math.random() * 5) + 's';
+                document.body.appendChild(f);
+            }
+        }
+
+        window.onload = initApp;
+    </script>
+</body>
+</html>
